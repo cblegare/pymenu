@@ -1,0 +1,15 @@
+flake8-quotes>=0.3
+radon
+sphinx_rtd_theme
+pycodestyle>=2.2
+pytest
+pytest-cov
+pytest-flake8
+flake8
+coverage
+click
+sphinx>=1.5
+sphinx-autodoc-typehints
+xenon
+pytest-
+anytree
