@@ -37,4 +37,3 @@ class DmenuPrompt(Prompt):
             choice = None
 
         return choice
-
