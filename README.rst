@@ -14,7 +14,7 @@
     :alt: Build Status
 
 .. |pypi_badge| image:: https://img.shields.io/pypi/v/pymenu.svg
-    :target: https://pypi.python.org/pypi/pymenu`
+    :target: https://pypi.python.org/pypi/pymenu
     :alt: Released on PyPI
 
 .. |py3_badge| image:: https://pyup.io/repos/github/cblegare/pymenu/python-3-shield.svg
