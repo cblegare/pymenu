@@ -2,7 +2,7 @@
 
 from pymenu import Menu
 from pymenu.ext.xdmenu import DmenuPrompt
-from pymenu.ext.xdg import make_xdg_menu_entry, launch_xdg_menu_entry
+from pymenu.ext.pyxdg import make_xdg_menu_entry, launch_xdg_menu_entry
 
 menu_entry = make_xdg_menu_entry()
 prompt = DmenuPrompt()
