@@ -11,6 +11,7 @@ from __future__ import unicode_literals
 
 import os
 from collections import OrderedDict
+import errno
 
 import anytree
 import six
@@ -170,8 +171,9 @@ class FileSystemMenuEntry(MenuEntry):
         try:
             for sub in os.listdir(path):
                 self.__class__(os.path.join(path, sub), self)
-        except NotADirectoryError:
-            pass
+        except OSError as e:
+            if e.errno != errno.ENOTDIR:
+                raise e
 
 
 class SimpleCommandPrompt(Prompt):
