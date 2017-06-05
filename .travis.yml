@@ -1,0 +1,33 @@
+language: python
+python: 3.5
+
+env:
+  - TOXENV=py35
+  - TOXENV=py34
+  - TOXENV=py33
+  - TOXENV=py27
+  - TOXENV=pypy
+
+# command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
+install: pip install -U tox -rrequirements_dev.txt
+
+# command to run tests, e.g. python setup.py test
+script: tox -e ${TOXENV}
+
+deploy:
+  - provider: pypi
+    distributions: "sdist bdist_wheel"
+    on:
+      branch: master
+    user: cblegare
+    password:
+      secure: Fx1D4bfekmIAlLlVLZkrlqu3b2S7mcGAHvn1Y6EhdEEdqqtEHsZ5aqJ9RzGgZ37DJKwuXPxUihXA5CooYvC9ClCpeqQ1mGKtAA9NifKHjUmwDyDXGug/86NaKPzLz3cqvsfVBQNKYf9uYQlDvii4eRlgLrq4+I2aIULZvn6YIYepqt1Gx+OVSHw8wviAQ9+ebllAqEHPeXdxuWMltb9kBvpjRZ2/GOdKNWcU1ZVY9hDrgFs7xX7YuVO//qJnO3ARaYIp5azHWVxGYeHhNKWCUvByRXEi3Xxk95pgK2xQCVNyLgzbkqtCNGQxeAVw9TAKj2XQVQmzdECCcZvjgeFPIPeiNoCpQxDVqSUrket5ILzJtZNmyECuObQRSH2Dy5mytTqMSYAAzOpxuYY3zefJE87FCFkD97yLuzebqW+cspBSaZVaTvRpHsTo9wotYgGvkaSykHD6929oAqqNNYt7qDYmviACj2LWnuV7H5segrBCPy5F1uq2ECeAfYn4teXyvVNfy1R6Y3a8VGnrrWm5317S9/B5ip0+8rdPr5YO6s6dnYiv1Xpe6FCk1ppG4jd3qD7ZZ+bRXXa7FVBb2irRrDiMRhKVe1g02ArdFwnTBelkRtdD5M+x/GMrEfmIduImMSTOuMNClRRzOx+Bo2WP/U8aslNz//ozgT4RBoHlKlQ=
+    server: https://testpypi.python.org/pypi
+  - provider: pypi
+    distributions: "sdist bdist_wheel"
+    on:
+      tags: true
+    user: cblegare
+    password:
+      secure: Fx1D4bfekmIAlLlVLZkrlqu3b2S7mcGAHvn1Y6EhdEEdqqtEHsZ5aqJ9RzGgZ37DJKwuXPxUihXA5CooYvC9ClCpeqQ1mGKtAA9NifKHjUmwDyDXGug/86NaKPzLz3cqvsfVBQNKYf9uYQlDvii4eRlgLrq4+I2aIULZvn6YIYepqt1Gx+OVSHw8wviAQ9+ebllAqEHPeXdxuWMltb9kBvpjRZ2/GOdKNWcU1ZVY9hDrgFs7xX7YuVO//qJnO3ARaYIp5azHWVxGYeHhNKWCUvByRXEi3Xxk95pgK2xQCVNyLgzbkqtCNGQxeAVw9TAKj2XQVQmzdECCcZvjgeFPIPeiNoCpQxDVqSUrket5ILzJtZNmyECuObQRSH2Dy5mytTqMSYAAzOpxuYY3zefJE87FCFkD97yLuzebqW+cspBSaZVaTvRpHsTo9wotYgGvkaSykHD6929oAqqNNYt7qDYmviACj2LWnuV7H5segrBCPy5F1uq2ECeAfYn4teXyvVNfy1R6Y3a8VGnrrWm5317S9/B5ip0+8rdPr5YO6s6dnYiv1Xpe6FCk1ppG4jd3qD7ZZ+bRXXa7FVBb2irRrDiMRhKVe1g02ArdFwnTBelkRtdD5M+x/GMrEfmIduImMSTOuMNClRRzOx+Bo2WP/U8aslNz//ozgT4RBoHlKlQ=
+

@@ -77,9 +77,11 @@ suppress_warnings = [
 # Mappings to external docs
 intersphinx_mapping = {'python': ('https://docs.python.org/3.4',
                                   None),
-                       'anytree': ('http://anytree.readthedocs.io/en/latest/',
+                       'anytree': ('https://anytree.readthedocs.io/en/latest/',
                                    None),
-                       'xdg': ('http://pyxdg.readthedocs.io/en/latest',
+                       'xdg': ('https://pyxdg.readthedocs.io/en/latest',
+                               None),
+                       'xdemnu': ('https://xdmenu.readthedocs.io/en/latest',
                                None)}
 
 # We enable the nitpicky mode that will warn about all references where the

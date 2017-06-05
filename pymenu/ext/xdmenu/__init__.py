@@ -6,7 +6,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from xdmenu import Dmenu
+import xdmenu
 
 from pymenu import Prompt
 
@@ -16,9 +16,9 @@ class DmenuPrompt(Prompt):
         """
 
         Args:
-            dmenu (xdmenu.Dmenu):
+            dmenu (xdmenu.BaseMenu):
         """
-        self._dmenu = dmenu or Dmenu()
+        self._dmenu = dmenu or xdmenu.Dmenu()
 
     def prompt_for_one(self, menu):
         """
@@ -30,5 +30,11 @@ class DmenuPrompt(Prompt):
             str
         """
         results = self._dmenu.run(menu)
-        return menu[0]
+
+        try:
+            choice = results[0]
+        except IndexError:
+            choice = None
+
+        return choice
 

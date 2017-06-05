@@ -20,7 +20,6 @@ try:
 except ImportError:
     # python 2
     from urlparse import urlparse
-import six
 
 
 __all__ = (
@@ -80,6 +79,15 @@ class ProjectMetadata(object):
         """
         value = 'A general purpose menu API.'
         return self._ensure_short_string(value)
+
+
+    @property
+    def long_description(self):
+        """
+        Returns:
+             str: A string
+        """
+        return open('README.rst').read()
 
     @property
     def version(self):
@@ -154,7 +162,7 @@ class ProjectMetadata(object):
         provided for `basic usage
         <http://setuptools.readthedocs.io/en/latest/setuptools.html?highlight=keywords#basic-use>`
         """
-        return ''
+        return 'X, X11, UNIX, menu, window manager, Python, Qtile, XDG, xdmenu'
 
     @property
     def author(self):
@@ -251,7 +259,7 @@ class ProjectMetadata(object):
         Returns:
              List[str]: A list of short strings
         """
-        return ['pyxdg', 'anytree']
+        return ['anytree']
 
     @property
     def tests_require(self):
@@ -314,11 +322,13 @@ class ProjectMetadata(object):
             Dict: Lists of dependencies indexed by the feature they enable.
         """
         XDG = ['pyxdg']
+        xdmenu = ['xdmenu']
         develop = ['sphinx>=1.5',
                    'sphinx_rtd_theme']
         return {'XDG': XDG,
+                'xdmenu': xdmenu,
                 'develop': develop,
-                'all': XDG + develop}
+                'all': XDG + xdmenu + develop}
 
     def setup(self):
         """Run :func:`setuptools.setup` using :func:~`raw`."""
@@ -366,25 +376,25 @@ class ProjectMetadata(object):
 
     @staticmethod
     def _ensure_short_string(string):
-        string = six.u(string)
+        string = str(string)
         assert len(string) <= 200
         return string
 
     @staticmethod
     def _ensure_long_string(string):
-        string = six.u(string)
+        string = str(string)
         return string
 
     @staticmethod
     def _ensure_email_address(string):
-        string = six.u(string)
+        string = str(string)
         _, email_str = email.utils.parseaddr(str(string))
         assert email_str == str(string)
         return string
 
     @staticmethod
     def _ensure_url(string, qualifying=None):
-        string = six.u(string)
+        string = str(string)
         min_attributes = ('scheme', 'netloc')
 
         qualifying = min_attributes if qualifying is None else qualifying
@@ -497,9 +507,6 @@ class Documentation(setuptools.Command):
     def initialize_options(self):
         """Set default values for options."""
         import os
-        # Each user option must be listed here with their default value.
-        project_directory = PROJECT_ROOT
-
         self.builder = 'html'
         self.dist_dir = os.path.join(PROJECT_ROOT, 'dist', 'docs')
         self.build_dir = os.path.join(PROJECT_ROOT, 'build', 'docs')

@@ -11,39 +11,16 @@ import subprocess
 import xdg.Menu
 import tatsu
 
-from pymenu import Launcher
-from pymenu.menu.entry import MenuEntry
-
-
-class XdgLauncher(Launcher):
-    def __init__(self, menu_def, ui_chooser):
-        """
-        An application launcher matching a XDG menu specification.
-
-        Args:
-            menu_def (str): Path to a `.menu` file as defined in the `Desktop
-                Menu Specification`_
-
-                .. _`Desktop Menu Specification`: https://specifications.freedesktop.org/menu-spec/menu-spec-1.0.html
-            ui_chooser (Callable): See :class:`pymenu.MenuEntry`.
-
-        See Also:
-            :class:`pymenu.menu.MenuEntry`
-        """
-        xdg_base_menu = xdg.Menu.parse(str(menu_def))
-        xdg_menu = XdgMenuEntry(xdg_base_menu, ui_chooser)
-        super(XdgLauncher, self).__init__(xdg_menu, launch_xdg_menu_entry)
+from pymenu import MenuEntry
 
 
 class XdgMenuEntry(MenuEntry):
-    def __init__(self, wrapped_entry, ui_chooser, parent=None):
+    def __init__(self, wrapped_entry, parent=None):
         """
         Wrap an XDG menu entry.
 
         Args:
             wrapped_entry (xdg.Menu.Menu):
-            ui_chooser (Callable[[dict], Any]): See
-                :class:`pymenu.MenuEntry`
             parent:
 
         See Also:
@@ -51,17 +28,71 @@ class XdgMenuEntry(MenuEntry):
         """
         if isinstance(wrapped_entry, xdg.Menu.Menu):
             key = wrapped_entry.getName()
-        else:
+        elif isinstance(wrapped_entry, xdg.Menu.MenuEntry):
             key = wrapped_entry.DesktopEntry.getName()
-
         super(XdgMenuEntry, self).__init__(key,
-                                           ui_chooser,
                                            value=wrapped_entry,
                                            parent=parent)
 
         if isinstance(wrapped_entry, xdg.Menu.Menu):
-            for child in wrapped_entry.getEntries():
-                XdgMenuEntry(child, ui_chooser, self)
+            for child in _menulike_children(wrapped_entry):
+                XdgMenuEntry(child, self)
+
+    @classmethod
+    def from_xdg_menu_file(cls, menu_def_file):
+        """
+        Constructor for a `.menu` file.
+
+        See Also:
+            :func:`pymenu.ext.xdg.make_xdg_menu_entry`
+        """
+        return make_xdg_menu_entry(menu_def_file, cls=cls)
+
+
+def _menulike_children(menu):
+    children = menu.getEntries()
+    for child in children:
+        if (isinstance(child, xdg.Menu.Menu)
+            or isinstance(child, xdg.Menu.MenuEntry)):
+            yield child
+
+
+def make_xdg_menu_entry(menu_def_file=None, cls=None):
+    """
+    Make a :class:`pymenu.MenuEntry` based on a XDG .menu file.
+
+    This is usually located in ``/etc/xdg/menus/applications.menu``.
+
+    Args:
+        menu_def_file (str): Path to a `.menu` file as defined in the `Desktop
+            Menu Specification`_. Defaults to
+            ``/etc/xdg/menus/applications.menu``
+
+            This file can usually be found in the ``/etc/xdg/menus`` folder.
+            The following command is a good start to list these .menu files:
+
+            .. code-block: text
+
+                find /etc/xdg/menus -name *applications.menu
+
+            These `.menu` file may not include applications that installed
+            their desktop entries in a user folder such as
+            ``~/.local/share/applications``.  In order to add additional
+            directories to the desktop entries search path, you need to add
+            a ``<AppDir>`` tag to the `.menu` file for the relevant directory.
+
+            .. _`Desktop Menu Specification`: https://specifications.freedesktop.org/menu-spec/menu-spec-1.0.html
+        cls (type): The subclass of :class:`pymenu.MenuEntry` to create.  The
+            default is :class:`pymenu.ext.xdg.XdgMenuEntry`.
+
+    See Also:
+        :class:`pymenu.menu.MenuEntry`
+    """
+    menu_def_file = menu_def_file or '/etc/xdg/menus/applications.menu'
+    cls = cls or XdgMenuEntry
+    xdg_base_menu = xdg.Menu.parse(str(menu_def_file))
+    menu_entry = cls(xdg_base_menu)
+    return menu_entry
 
 
 def launch_xdg_menu_entry(entry, *targets):
@@ -77,7 +108,7 @@ def launch_xdg_menu_entry(entry, *targets):
         None
     """
     desktop_app = Application(entry)
-    desktop_app.launch(targets)
+    desktop_app.launch(*targets)
 
 
 class Application(object):
@@ -212,10 +243,12 @@ class Application(object):
         """
         cmd = self.executable[:]
         for arg in self.arguments:
-            if arg in ['%f', '%u'] and target:
-                cmd.append(target)
-            elif arg in ['%F', '%U'] and target:
-                cmd.extend(target)
+            if arg in ['%f', '%u']:
+                if target:
+                    cmd.append(target)
+            elif arg in ['%F', '%U']:
+                if target:
+                    cmd.extend(target)
             else:
                 cmd.append(arg)
         return cmd
@@ -234,9 +267,9 @@ class Application(object):
         unmapped_args = [''.join(argument_ast)
                          for argument_ast in arguments_ast]
 
-        if 1 < sum(arg
+        if 1 < len([arg
                    for arg in unmapped_args
-                   if arg in ['%f', '%F', '%u', '%U']):
+                   if arg in ['%f', '%F', '%u', '%U']]):
             raise Exception('Malformed Exec entry.')
 
         for arg in unmapped_args:
