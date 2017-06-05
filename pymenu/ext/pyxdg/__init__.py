@@ -52,8 +52,7 @@ class XdgMenuEntry(MenuEntry):
 def _menulike_children(menu):
     children = menu.getEntries()
     for child in children:
-        if (isinstance(child, xdg.Menu.Menu)
-            or isinstance(child, xdg.Menu.MenuEntry)):
+        if isinstance(child, (xdg.Menu.Menu, xdg.Menu.MenuEntry)):
             yield child
 
 
@@ -81,7 +80,7 @@ def make_xdg_menu_entry(menu_def_file=None, cls=None):
             directories to the desktop entries search path, you need to add
             a ``<AppDir>`` tag to the `.menu` file for the relevant directory.
 
-            .. _`Desktop Menu Specification`: https://specifications.freedesktop.org/menu-spec/menu-spec-1.0.html
+            .. _`Desktop Menu Specification`: https://specifications.freedesktop.org/menu-spec/menu-spec-1.0.html  # noqa: E501
         cls (type): The subclass of :class:`pymenu.MenuEntry` to create.  The
             default is :class:`pymenu.ext.xdg.XdgMenuEntry`.
 
@@ -143,7 +142,7 @@ class Application(object):
                 If you do not use this from of a XDG compliant environment (in
                 Qtile_, for instance) you will need to set this manually.
 
-                .. _`Debian Alternatives System`: https://wiki.debian.org/DebianAlternatives
+                .. _`Debian Alternatives System`: https://wiki.debian.org/DebianAlternatives  # noqa: E501
                 .. _Qtile: http://www.qtile.org
         """
         self._entry = entry.DesktopEntry  # type: xdg.DesktopEntry.DesktopEntry
