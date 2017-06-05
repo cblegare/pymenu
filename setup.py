@@ -321,7 +321,7 @@ class ProjectMetadata(object):
         Returns:
             Dict: Lists of dependencies indexed by the feature they enable.
         """
-        XDG = ['pyxdg']
+        XDG = ['pyxdg', 'tatsu']
         xdmenu = ['xdmenu']
         develop = ['sphinx>=1.5',
                    'sphinx_rtd_theme']

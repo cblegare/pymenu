@@ -10,3 +10,4 @@ pycodestyle>=2.2
 pytest-flake8
 pyxdg
 xdmenu
+tatsu
