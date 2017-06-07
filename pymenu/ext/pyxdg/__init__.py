@@ -352,35 +352,14 @@ _exec_parser = tatsu.compile(EXEC_GRAMMAR)
 
 def exec_parser(exec_string):
     """
-    Examples:
-        >>> exec_parser(r'vim')
-        [['v', 'i', 'm'], []]
-        >>> exec_parser(r'"vim"')
-        [['v', 'i', 'm'], []]
-        >>> exec_parser(r'vim arg1 arg2')
-        [['v', 'i', 'm'], [['a', 'r', 'g', '1'], ['a', 'r', 'g', '2']]]
-        >>> exec_parser(r'vim "arg"')
-        [['v', 'i', 'm'], [['a', 'r', 'g']]]
-        >>> exec_parser(r'"vim arg"')
-        [['v', 'i', 'm', ' ', 'a', 'r', 'g'], []]
-        >>> exec_parser(r'"vim arg" "x y"')
-        [['v', 'i', 'm', ' ', 'a', 'r', 'g'], [['x', ' ', 'y']]]
-        >>> exec_parser(r'vim %u')
-        [['v', 'i', 'm'], [['%u']]]
-        >>> exec_parser(r'vim "%u"')
-        [['v', 'i', 'm'], [['%u']]]
-        >>> exec_parser(r'vim "%u" foo %F')
-        [['v', 'i', 'm'], [['%u'], ['f', 'o', 'o'], ['%F']]]
-        >>> exec_parser(r'vim "\$foo"')
-        [['v', 'i', 'm'], [['$', 'f', 'o', 'o']]]
-    """
+    Make the AST for a XDG Exec string.
 
-    # other test should include
-    # but doctests breaks with such mad escape sequences mangling
-    # >>> make_cmd_from_exec(r'"a a" b "c \" 3"')
-    # [['a', ' ', 'a'], [['b'], ['c', ' ', '"', ' ', '3']]]
-    # >>> make_cmd_from_exec(r'"a \\\\ \$f\`"')
-    # [['a', ' ', '\\', '\\', ' ', '$', 'f', '`'], []]
+    Args:
+        exec_string (str):
+
+    Returns:
+        list: AST
+    """
     return _exec_parser.parse(exec_string)
 
 
