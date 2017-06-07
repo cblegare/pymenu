@@ -15,23 +15,30 @@ from pymenu import MenuEntry
 
 
 class XdgMenuEntry(MenuEntry):
-    def __init__(self, wrapped_entry, parent=None):
+    def __init__(self, wrapped_entry, app_factory=None, parent=None):
         """
         Wrap an XDG menu entry.
 
         Args:
-            wrapped_entry (xdg.Menu.Menu):
+            wrapped_entry: An object defined in the :mod:`xdg.Menu` module.
+            app_factory (Callable): A function that takes a
+                :class:`xdg.Menu.MenuEntry` and returns a :class:`~Application`.
             parent:
 
         See Also:
             :class:`xdg.Menu.Menu`
         """
+        app_factory = app_factory or Application
+
         if isinstance(wrapped_entry, xdg.Menu.Menu):
             key = wrapped_entry.getName()
+            value = wrapped_entry
         elif isinstance(wrapped_entry, xdg.Menu.MenuEntry):
             key = wrapped_entry.DesktopEntry.getName()
+            value = app_factory(wrapped_entry)
         super(XdgMenuEntry, self).__init__(key,
-                                           value=wrapped_entry,
+                                           value=value,
+                                           app_factory=app_factory,
                                            parent=parent)
 
         if isinstance(wrapped_entry, xdg.Menu.Menu):
@@ -44,7 +51,7 @@ class XdgMenuEntry(MenuEntry):
         Constructor for a `.menu` file.
 
         See Also:
-            :func:`pymenu.ext.xdg.make_xdg_menu_entry`
+            :func:`~make_xdg_menu_entry`
         """
         return make_xdg_menu_entry(menu_def_file, cls=cls)
 
@@ -82,10 +89,10 @@ def make_xdg_menu_entry(menu_def_file=None, cls=None):
 
             .. _`Desktop Menu Specification`: https://specifications.freedesktop.org/menu-spec/menu-spec-1.0.html  # noqa: E501
         cls (type): The subclass of :class:`pymenu.MenuEntry` to create.  The
-            default is :class:`pymenu.ext.xdg.XdgMenuEntry`.
+            default is :class:`~XdgMenuEntry`.
 
     See Also:
-        :class:`pymenu.menu.MenuEntry`
+        :class:`pymenu.MenuEntry`
     """
     menu_def_file = menu_def_file or '/etc/xdg/menus/applications.menu'
     cls = cls or XdgMenuEntry
@@ -181,6 +188,10 @@ class Application(object):
         for cmd in cmds:
             processes.append(subprocess.Popen(cmd, **popen_kwargs))
         return processes
+
+    @property
+    def entry(self):
+        return self._entry
 
     @property
     def executable(self):

@@ -1,7 +1,7 @@
-tests\.unit package
+pymenu\.ext package
 ===================
 
-.. automodule:: tests.unit
+.. automodule:: pymenu.ext
     :members:
     :undoc-members:
     :show-inheritance:
@@ -11,5 +11,6 @@ Subpackages
 
 .. toctree::
 
-    tests.unit.ext
+    pymenu.ext.pyxdg
+    pymenu.ext.xdmenu
 

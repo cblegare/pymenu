@@ -6,3 +6,10 @@ pymenu package
     :undoc-members:
     :show-inheritance:
 
+Subpackages
+-----------
+
+.. toctree::
+
+    pymenu.ext
+
